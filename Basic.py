@@ -7,7 +7,7 @@ import tensorflow as tf
 # The following code creates a static table
 
 st.markdown("# Handeling outputs")
-st.sidebar.markdown("# Handeling outputs")
+st.sidebar.success("Choose a page from above")
 
 @st.cache_data
 def GetTensor():
