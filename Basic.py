@@ -5,6 +5,7 @@ import time
 import tensorflow as tf
 
 # The following code creates a static table
+st.set_page_config(page_title="Welcome Streamlit", page_icon="birthday.png")
 
 st.markdown("# Handeling outputs")
 st.sidebar.success("Choose a page from above")
