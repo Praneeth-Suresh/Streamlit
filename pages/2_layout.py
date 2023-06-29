@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import time
 import numpy as np
+import random
 
 st.markdown("## Moving on to layout ...")
 st.sidebar.markdown("# Layout")
@@ -43,3 +44,13 @@ for i in range(100):
   latest_iteration.text(f'Web time: {i+1 / 100}')
   bar.progress(i + 1)
   time.sleep(1 / 100)
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Happiness", random.randint(0, 100))
+col2.write("""
+Compartmentalise
+      your
+    thoughts
+      """)
+col3.button("Click me for happiness!")
