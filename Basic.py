@@ -1,27 +1,26 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import tensorflow as tf
 
 # The following code creates a static table
 st.set_page_config(page_title="Welcome Streamlit", page_icon="birthday.png")
 
-st.markdown("# Handeling outputs")
+st.markdown("# Handling outputs")
 st.sidebar.success("Choose a page from above")
 
 @st.cache_data
-def GetTensor():
-  return tf.random.normal([4, 3]) * 10
+def example_table():
+  return np.random.default_rng(42).normal(0, 10, size=(4, 3))
 
-t1 = GetTensor()
+t1 = example_table()
 
 st.table(t1)
 
-# The following code creates an interactive table woth a highlight
+# The following code creates an interactive table
 
 df = pd.DataFrame(t1)
 
-st.dataframe(df.style.highlight_min(axis=0))
+st.dataframe(df)
 
 chart_data = pd.DataFrame(
      np.random.randn(20, 3),
