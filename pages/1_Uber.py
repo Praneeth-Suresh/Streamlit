@@ -1,39 +1,31 @@
-import streamlit as st
-import pandas as pd
 import numpy as np
-import time
-import tensorflow as tf
+import pandas as pd
+import streamlit as st
 
-st.title('Uber pickups in NYC')
-st.sidebar.markdown("Uber")
+DATE_COLUMN = "date/time"
 
-DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-         'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
+st.title("Synthetic NYC pickups")
+st.caption("Generated example data, not real trips.")
 
 @st.cache_data
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
+def load_data():
+    rng = np.random.default_rng(42)
+    return pd.DataFrame({
+        DATE_COLUMN: pd.date_range("2025-01-01", periods=480, freq="7min"),
+        "lat": rng.uniform(40.71, 40.78, size=480),
+        "lon": rng.uniform(-74.02, -73.95, size=480),
+    })
 
+data = load_data()
+if st.checkbox("Show sample data"):
+    st.dataframe(data)
 
-data_load_state = st.text('Loading data...')
-data = load_data(10000)
-data_load_state.text("Done! (using st.cache_data)")
+st.subheader("Pickups by hour")
+hist = data[DATE_COLUMN].dt.hour.value_counts().reindex(range(24), fill_value=0)
+hist.index.name = "Hour"
+st.bar_chart(hist)
 
-if st.checkbox('Show raw data'):
-    st.markdown('## Raw data')
-    st.write(data)
-
-st.markdown('<h2>Number of pickups by hour</h2>', unsafe_allow_html=True)
-
-hist_values = np.histogram(data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-st.bar_chart(hist_values)
-
-hour_to_filter = st.slider("Hour of the day", 0, 23, 17) # The numbers are: start, stop, default
-filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
-st.subheader(f'Map of all pickups at {hour_to_filter}:00')
-st.map(filtered_data)
+hour = st.slider("Hour of the day", 0, 23, 17)
+points = data.loc[data[DATE_COLUMN].dt.hour == hour, ["lat", "lon"]]
+st.subheader(f"Pickups at {hour:02d}:00")
+st.map(points)
